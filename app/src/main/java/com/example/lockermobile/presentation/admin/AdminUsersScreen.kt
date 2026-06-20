@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.lockermobile.domain.model.User
 import com.example.lockermobile.core.ui.theme.*
+import com.example.lockermobile.core.ui.components.AvatarImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,13 +88,11 @@ fun UserItem(user: User) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
+            AvatarImage(
                 model = user.profilePicture,
-                contentDescription = null,
                 modifier = Modifier
                     .size(50.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                    .clip(CircleShape)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {

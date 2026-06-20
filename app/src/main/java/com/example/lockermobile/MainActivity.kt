@@ -42,9 +42,6 @@ class MainActivity : ComponentActivity() {
                     Screen.AdminDashboard.route,
                     Screen.AdminUsers.route,
                     Screen.AdminReports.route,
-                    Screen.EmployerDashboard.route,
-                    Screen.EmployerJobs.route,
-                    Screen.EmployerCandidates.route,
                     Screen.Community.route,
                     Screen.Chat.route,
                     Screen.Profile.route

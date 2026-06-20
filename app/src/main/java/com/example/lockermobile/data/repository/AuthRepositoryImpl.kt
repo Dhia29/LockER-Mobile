@@ -17,36 +17,44 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     override fun login(email: String, password: String): Flow<Result<User>> = flow {
-        val userEntity = userDao.getUserByEmail(email)
-        if (userEntity != null && userEntity.passwordHash == password) {
-            val user = userEntity.toDomain()
-            sessionManager.saveSession(user.email, userEntity.role, user.name)
-            emit(Result.success(user))
-        } else {
-            emit(Result.failure(Exception("Invalid email or password")))
+        try {
+            val userEntity = userDao.getUserByEmail(email)
+            if (userEntity != null && userEntity.passwordHash == password) {
+                val user = userEntity.toDomain()
+                sessionManager.saveSession(user.email, userEntity.role, user.name)
+                emit(Result.success(user))
+            } else {
+                emit(Result.failure(Exception("Invalid email or password")))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
         }
     }
 
     override fun register(name: String, email: String, password: String, role: UserRole): Flow<Result<User>> = flow {
-        val existingUser = userDao.getUserByEmail(email)
-        if (existingUser != null) {
-            emit(Result.failure(Exception("User already exists")))
-            return@flow
-        }
+        try {
+            val existingUser = userDao.getUserByEmail(email)
+            if (existingUser != null) {
+                emit(Result.failure(Exception("User already exists")))
+                return@flow
+            }
 
-        val newUser = UserEntity(
-            email = email,
-            name = name,
-            passwordHash = password,
-            role = role,
-            profilePicture = "https://i.pravatar.cc/150?u=$email",
-            bio = "",
-            location = "",
-            roleTitle = role.name
-        )
-        userDao.insertUser(newUser)
-        sessionManager.saveSession(email, role, name)
-        emit(Result.success(newUser.toDomain()))
+            val newUser = UserEntity(
+                email = email,
+                name = name,
+                passwordHash = password,
+                role = role,
+                profilePicture = "",
+                bio = "",
+                location = "",
+                roleTitle = role.name
+            )
+            userDao.insertUser(newUser)
+            sessionManager.saveSession(email, role, name)
+            emit(Result.success(newUser.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
     }
 
     override fun logout(): Flow<Unit> = flow {

@@ -74,46 +74,6 @@ class JobRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateApplicationStatus(applicationId: String, status: String): Result<Unit> {
-        return try {
-            val apps = applicationDao.getAllApplications().first()
-            val app = apps.find { it.id == applicationId }
-            if (app != null) {
-                applicationDao.updateApplication(app.copy(status = status))
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("Application not found"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override fun getEmployerJobs(companyId: String): Flow<List<Job>> {
-        // Mock filtering by companyId
-        return jobDao.getAllJobs().map { entities ->
-            entities.filter { it.companyId == companyId }.map { it.toDomain() }
-        }
-    }
-
-    override fun getApplicationsByJob(jobId: String): Flow<List<JobApplication>> {
-        return applicationDao.getApplicationsByJob(jobId).map { entities ->
-            entities.map { app ->
-                // In a real app we'd fetch the user name here
-                JobApplication(
-                    id = app.id,
-                    jobId = app.jobId,
-                    jobTitle = "Job $jobId",
-                    companyName = "My Company",
-                    companyLogo = "",
-                    userEmail = app.userEmail,
-                    status = app.status,
-                    appliedDate = app.appliedDate
-                )
-            }
-        }
-    }
-
     private fun JobEntity.toDomain(): Job {
         return Job(
             id = id,

@@ -17,14 +17,12 @@ import com.example.lockermobile.presentation.jobseeker.JobApplicationsPage
 import com.example.lockermobile.presentation.admin.AdminDashboard
 import com.example.lockermobile.presentation.admin.AdminUsersScreen
 import com.example.lockermobile.presentation.admin.AdminReportsScreen
-import com.example.lockermobile.presentation.employer.EmployerDashboard
-import com.example.lockermobile.presentation.employer.EmployerJobsScreen
-import com.example.lockermobile.presentation.employer.CandidateManagementScreen
-import com.example.lockermobile.presentation.employer.PostJobScreen
 import com.example.lockermobile.presentation.community.CommunityPage
 import com.example.lockermobile.presentation.chat.ChatPage
 import com.example.lockermobile.presentation.chat.ChatDetailScreen
 import com.example.lockermobile.presentation.profile.ProfilePage
+import com.example.lockermobile.presentation.profile.SettingsPage
+import com.example.lockermobile.presentation.home.NotificationsPage
 import com.example.lockermobile.presentation.jobs.JobDetailPage
 
 import com.example.lockermobile.domain.model.UserRole
@@ -67,6 +65,7 @@ fun NavGraph(
             val state by viewModel.state.collectAsState()
             
             LoginPage(
+                navController = navController,
                 onNavigateToRegister = {
                     navController.navigate(Screen.Register.route)
                 },
@@ -76,7 +75,7 @@ fun NavGraph(
             LaunchedEffect(state.isLoginSuccess) {
                 if (state.isLoginSuccess) {
                     navController.navigate(Screen.Splash.route) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
             }
@@ -95,10 +94,17 @@ fun NavGraph(
             LaunchedEffect(state.isRegisterSuccess) {
                 if (state.isRegisterSuccess) {
                     navController.navigate(Screen.Splash.route) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(Screen.Register.route) { inclusive = true }
                     }
                 }
             }
+        }
+        composable(Screen.ForgotPassword.route) {
+            ForgotPasswordPage(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         // Admin Flow
@@ -112,33 +118,14 @@ fun NavGraph(
             AdminReportsScreen()
         }
 
-        // Employer Flow
-        composable(Screen.EmployerDashboard.route) {
-            EmployerDashboard(navController)
-        }
-        composable(Screen.EmployerJobs.route) {
-            EmployerJobsScreen(
-                onAddJobClick = {
-                    navController.navigate(Screen.PostJob.route)
-                }
-            )
-        }
-        composable(Screen.PostJob.route) {
-            PostJobScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
-        }
-        composable(Screen.EmployerCandidates.route) {
-            CandidateManagementScreen()
-        }
-
         // Job Seeker Flow
         composable(Screen.Home.route) {
             JobSeekerHome(
                 onJobClick = { jobId ->
                     navController.navigate(Screen.JobDetail.createRoute(jobId))
+                },
+                onNotificationClick = {
+                    navController.navigate(Screen.Notifications.route)
                 }
             )
         }
@@ -170,6 +157,31 @@ fun NavGraph(
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route)
+                }
+            )
+        }
+        composable(Screen.Settings.route) {
+            SettingsPage(
+                navController = navController,
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(Screen.Notifications.route) {
+            NotificationsPage(onBackClick = { navController.popBackStack() })
+        }
+        composable(Screen.SavedJobs.route) {
+            // Reusing Home for now or create a filtered list
+            JobSeekerHome(
+                onJobClick = { /* TODO */ },
+                onNotificationClick = {
+                    navController.navigate(Screen.Notifications.route)
                 }
             )
         }

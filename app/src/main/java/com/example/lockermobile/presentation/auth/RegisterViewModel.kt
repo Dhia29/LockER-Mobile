@@ -54,17 +54,21 @@ class RegisterViewModel @Inject constructor(
 
             _state.update { it.copy(isLoading = true, error = null) }
             
-            authRepository.register(
-                currentState.fullName,
-                currentState.email,
-                currentState.password,
-                currentState.role
-            ).collect { result ->
-                result.onSuccess {
-                    _state.update { it.copy(isLoading = false, isRegisterSuccess = true) }
-                }.onFailure { exception ->
-                    _state.update { it.copy(isLoading = false, error = exception.message ?: "Registration failed") }
+            try {
+                authRepository.register(
+                    currentState.fullName,
+                    currentState.email,
+                    currentState.password,
+                    currentState.role
+                ).collect { result ->
+                    result.onSuccess {
+                        _state.update { it.copy(isLoading = false, isRegisterSuccess = true) }
+                    }.onFailure { exception ->
+                        _state.update { it.copy(isLoading = false, error = exception.message ?: "Registration failed") }
+                    }
                 }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message ?: "An unexpected error occurred") }
             }
         }
     }

@@ -41,17 +41,17 @@ class SplashViewModel @Inject constructor(
             
             delay(1500L) // Minimum splash duration
             
-            val userRole = sessionManager.userRole.first()
-            if (userRole != null) {
-                _startDestination.value = when (userRole) {
-                    UserRole.ADMIN -> Screen.AdminDashboard.route
-                    UserRole.EMPLOYER -> Screen.EmployerDashboard.route
-                    UserRole.JOB_SEEKER -> Screen.Home.route
+            sessionManager.userRole.collect { userRole ->
+                if (userRole != null) {
+                    _startDestination.value = when (userRole) {
+                        UserRole.ADMIN -> Screen.AdminDashboard.route
+                        UserRole.JOB_SEEKER -> Screen.Home.route
+                    }
+                } else {
+                    _startDestination.value = Screen.Login.route
                 }
-            } else {
-                _startDestination.value = Screen.Login.route
+                _isReady.value = true
             }
-            _isReady.value = true
         }
     }
 }

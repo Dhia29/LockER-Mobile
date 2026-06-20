@@ -19,11 +19,11 @@ class DatabaseSeeder @Inject constructor(
 
     private suspend fun seedCompanies() {
         val companies = listOf(
-            CompanyEntity("1", "Google", "https://via.placeholder.com/150?text=Google", "Work on the world's most popular search engine and more.", "Mountain View, CA", "Technology"),
-            CompanyEntity("2", "Meta", "https://via.placeholder.com/150?text=Meta", "Connect the world through social media.", "Menlo Park, CA", "Social Media"),
-            CompanyEntity("3", "Gojek", "https://via.placeholder.com/150?text=Gojek", "On-demand multi-service platform in Indonesia.", "Jakarta", "Technology"),
-            CompanyEntity("4", "Traveloka", "https://via.placeholder.com/150?text=Traveloka", "Leading travel and lifestyle platform.", "Jakarta", "Travel"),
-            CompanyEntity("5", "Shopee", "https://via.placeholder.com/150?text=Shopee", "Leading e-commerce platform in SE Asia.", "Singapore", "E-commerce")
+            CompanyEntity("1", "Google", "", "Work on the world's most popular search engine and more.", "Mountain View, CA", "Technology"),
+            CompanyEntity("2", "Meta", "", "Connect the world through social media.", "Menlo Park, CA", "Social Media"),
+            CompanyEntity("3", "Gojek", "", "On-demand multi-service platform in Indonesia.", "Jakarta", "Technology"),
+            CompanyEntity("4", "Traveloka", "", "Leading travel and lifestyle platform.", "Jakarta", "Travel"),
+            CompanyEntity("5", "Shopee", "", "Leading e-commerce platform in SE Asia.", "Singapore", "E-commerce")
         )
         companies.forEach { companyDao.insertCompany(it) }
     }
@@ -45,7 +45,7 @@ class DatabaseSeeder @Inject constructor(
                     location = if (i % 2 == 0) "Jakarta" else "Remote",
                     salary = "Rp ${10 + i}.000.000 - ${20 + i}.000.000",
                     type = types[i % 4],
-                    logoUrl = "https://via.placeholder.com/150?text=${companies[i % 5]}",
+                    logoUrl = "",
                     description = "Comprehensive job description for position $i at ${companies[i % 5]}. We are looking for talented individuals to join our growing team.",
                     postedTime = "$i hours ago",
                     category = categories[i % 4]
@@ -62,7 +62,7 @@ class DatabaseSeeder @Inject constructor(
                 PostEntity(
                     id = i.toString(),
                     authorName = "User $i",
-                    authorAvatar = "https://i.pravatar.cc/150?u=user$i",
+                    authorAvatar = "",
                     authorRole = "Professional $i",
                     content = "This is community post number $i. Discussion about the future of work and technology trends in Indonesia. #LockER #Career #Tech",
                     timestamp = "$i days ago",
