@@ -20,6 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.lockermobile.domain.model.UserRole
 import com.example.lockermobile.core.ui.components.LockerButton
 import com.example.lockermobile.core.ui.components.LockerTextField
+import com.example.lockermobile.core.ui.theme.Primary
+import com.example.lockermobile.core.ui.theme.PrimaryDark
 
 @Composable
 fun RegisterPage(
@@ -116,32 +118,6 @@ fun RegisterPage(
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Select Role",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                selected = state.role == UserRole.JOB_SEEKER,
-                onClick = { viewModel.onRoleChange(UserRole.JOB_SEEKER) }
-            )
-            Text(text = "Job Seeker")
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(
-                selected = state.role == UserRole.EMPLOYER,
-                onClick = { viewModel.onRoleChange(UserRole.EMPLOYER) }
-            )
-            Text(text = "Employer")
-        }
 
         if (state.error != null) {
             Text(

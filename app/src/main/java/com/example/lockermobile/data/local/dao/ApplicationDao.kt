@@ -12,14 +12,8 @@ interface ApplicationDao {
     @Query("SELECT * FROM applications WHERE userEmail = :email")
     fun getApplicationsByUser(email: String): Flow<List<ApplicationEntity>>
 
-    @Query("SELECT * FROM applications WHERE jobId = :jobId")
-    fun getApplicationsByJob(jobId: String): Flow<List<ApplicationEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertApplication(application: ApplicationEntity)
-
-    @Update
-    suspend fun updateApplication(application: ApplicationEntity)
 
     @Delete
     suspend fun deleteApplication(application: ApplicationEntity)

@@ -31,12 +31,16 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             
-            authRepository.login(_state.value.email, _state.value.password).collect { result ->
-                result.onSuccess {
-                    _state.update { it.copy(isLoading = false, isLoginSuccess = true) }
-                }.onFailure { exception ->
-                    _state.update { it.copy(isLoading = false, error = exception.message ?: "Login failed") }
+            try {
+                authRepository.login(_state.value.email, _state.value.password).collect { result ->
+                    result.onSuccess {
+                        _state.update { it.copy(isLoading = false, isLoginSuccess = true) }
+                    }.onFailure { exception ->
+                        _state.update { it.copy(isLoading = false, error = exception.message ?: "Login failed") }
+                    }
                 }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message ?: "An unexpected error occurred") }
             }
         }
     }

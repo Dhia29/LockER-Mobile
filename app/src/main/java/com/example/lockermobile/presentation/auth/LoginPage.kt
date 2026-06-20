@@ -21,12 +21,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.lockermobile.core.ui.components.LockerButton
 import com.example.lockermobile.core.ui.components.LockerOutlinedButton
 import com.example.lockermobile.core.ui.components.LockerTextField
+import com.example.lockermobile.presentation.navigation.Screen
 
 @Composable
 fun LoginPage(
+    navController: NavController,
     onNavigateToRegister: () -> Unit,
     onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
@@ -100,7 +103,7 @@ fun LoginPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
-                .clickable { /* TODO */ },
+                .clickable { navController.navigate(Screen.ForgotPassword.route) },
             textAlign = TextAlign.End,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary

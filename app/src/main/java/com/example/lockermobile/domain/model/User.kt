@@ -11,6 +11,8 @@ data class User(
     val roleEnum: UserRole = UserRole.JOB_SEEKER,
     val location: String,
     val bio: String,
+    val phoneNumber: String? = null,
+    val address: String? = null,
     val experience: List<Experience> = emptyList(),
     val education: List<Education> = emptyList(),
     val skills: List<String> = emptyList()
@@ -20,7 +22,8 @@ data class User(
 data class Experience(
     val title: String,
     val company: String,
-    val duration: String,
+    val startDate: String,
+    val endDate: String,
     val description: String
 )
 

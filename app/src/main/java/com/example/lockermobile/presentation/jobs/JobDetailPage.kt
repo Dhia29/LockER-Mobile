@@ -22,8 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.lockermobile.core.ui.components.AvatarImage
+import androidx.compose.foundation.shape.CircleShape
 import com.example.lockermobile.core.ui.theme.*
-import com.example.lockermobile.core.ui.components.LockerButton
+import com.example.lockermobile.core.ui.components.GlassButton
+import com.example.lockermobile.core.ui.components.GlassCard
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Work
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.LocationOn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,144 +47,201 @@ fun JobDetailPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Job Details") },
+                title = { Text("Details", fontWeight = FontWeight.ExtraBold) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.padding(start = 8.dp).background(Color.White.copy(alpha = 0.5f), CircleShape)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Primary)
                     }
-                }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { /* Share */ },
+                        modifier = Modifier.padding(end = 8.dp).background(Color.White.copy(alpha = 0.5f), CircleShape)
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Primary)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         },
         bottomBar = {
             state.job?.let {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shadowElevation = 8.dp
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.White.copy(alpha = 0.8f))
+                            )
+                        )
+                        .padding(24.dp)
                 ) {
-                    LockerButton(
-                        text = if (state.isApplied) "Applied" else "Apply Now",
+                    GlassButton(
+                        text = if (state.isApplied) "Application Submitted" else "Apply Now",
                         onClick = { viewModel.applyForJob() },
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        enabled = !state.isApplied
+                        enabled = !state.isApplied,
+                        containerColor = if (state.isApplied) Success else Primary
                     )
                 }
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
-        if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (state.job != null) {
-            val job = state.job!!
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AsyncImage(
-                        model = job.logoUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = job.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.08f),
+                            Color.White.copy(alpha = 0.5f)
                         )
+                    )
+                )
+        ) {
+            if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Primary)
+                }
+            } else if (state.job != null) {
+                val job = state.job!!
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    GlassCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        cornerRadius = 28.dp,
+                        alpha = 0.35f
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AvatarImage(
+                                model = job.logoUrl,
+                                modifier = Modifier
+                                    .size(84.dp)
+                                    .clip(RoundedCornerShape(20.dp)),
+                                placeholderIcon = Icons.Default.Work
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = job.title,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = job.companyName,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        DetailChip(icon = Icons.Default.LocationOn, text = job.location, modifier = Modifier.weight(1f))
+                        DetailChip(icon = Icons.Default.Work, text = job.type, modifier = Modifier.weight(1f))
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    SectionHeader(title = "Salary Expectation")
+                    GlassCard(modifier = Modifier.fillMaxWidth(), alpha = 0.3f) {
                         Text(
-                            text = job.companyName,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Primary
+                            text = job.salary,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Success,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    SectionHeader(title = "Role Description")
+                    GlassCard(modifier = Modifier.fillMaxWidth(), alpha = 0.25f) {
+                        Text(
+                            text = job.description,
+                            style = MaterialTheme.typography.bodyLarge,
+                            lineHeight = 26.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Schedule, 
+                            contentDescription = null, 
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = " Posted ${job.postedTime}",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(120.dp))
                 }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    InfoChip(icon = Icons.Default.LocationOn, text = job.location)
-                    InfoChip(text = job.type)
-                    InfoChip(text = job.category)
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Text(
-                    text = "Salary",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = job.salary,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Success
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Text(
-                    text = "Description",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = job.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    lineHeight = 20.sp
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Text(
-                    text = "Posted ${job.postedTime}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.Gray
-                )
-                
-                Spacer(modifier = Modifier.height(80.dp)) // Padding for bottom button
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Job not found")
             }
         }
     }
 }
 
 @Composable
-fun InfoChip(icon: androidx.compose.ui.graphics.vector.ImageVector? = null, text: String) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = SecondaryContainer,
-        contentColor = OnSecondaryContainer
+fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.ExtraBold,
+        modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+    )
+}
+
+@Composable
+fun DetailChip(icon: ImageVector, text: String, modifier: Modifier = Modifier) {
+    GlassCard(
+        modifier = modifier,
+        cornerRadius = 16.dp,
+        alpha = 0.25f
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            if (icon != null) {
-                Icon(icon, contentDescription = null, modifier = Modifier.size(14.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-            Text(text = text, style = MaterialTheme.typography.labelMedium)
+            Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp), tint = Primary)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text, 
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

@@ -16,6 +16,8 @@ data class UserEntity(
     val bio: String,
     val location: String,
     val roleTitle: String, // e.g., "Mobile Developer"
+    val phoneNumber: String? = null,
+    val address: String? = null,
     val experience: List<Experience> = emptyList(),
     val education: List<Education> = emptyList(),
     val skills: List<String> = emptyList()

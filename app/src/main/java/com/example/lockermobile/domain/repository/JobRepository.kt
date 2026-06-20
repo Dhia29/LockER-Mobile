@@ -9,7 +9,4 @@ interface JobRepository {
     fun getJobById(id: String): Flow<Job?>
     fun getApplications(email: String): Flow<List<JobApplication>>
     suspend fun applyForJob(jobId: String, userEmail: String): Result<Unit>
-    suspend fun updateApplicationStatus(applicationId: String, status: String): Result<Unit>
-    fun getEmployerJobs(companyId: String): Flow<List<Job>>
-    fun getApplicationsByJob(jobId: String): Flow<List<JobApplication>>
 }

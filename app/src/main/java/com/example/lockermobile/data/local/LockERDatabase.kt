@@ -16,7 +16,7 @@ import com.example.lockermobile.data.local.util.Converters
         NotificationEntity::class,
         ApplicationEntity::class
     ],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

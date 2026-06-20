@@ -15,6 +15,5 @@ data class JobEntity(
     val logoUrl: String,
     val description: String,
     val postedTime: String,
-    val category: String,
-    val isEmployerJob: Boolean = false // To distinguish jobs posted by the logged-in employer
+    val category: String
 )
