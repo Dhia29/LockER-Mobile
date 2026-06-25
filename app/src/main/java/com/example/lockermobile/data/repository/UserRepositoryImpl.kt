@@ -21,12 +21,27 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun getCurrentUser(): Flow<User?> = flow {
         val email = sessionManager.userEmail.first()
+        val role = sessionManager.userRole.first()
+        val name = sessionManager.userName.first() ?: "User"
+        
         if (email != null) {
             val entity = userDao.getUserByEmail(email)
             if (entity != null) {
                 emit(entity.toDomain())
             } else {
-                emit(null)
+                emit(User(
+                    id = email,
+                    name = name,
+                    email = email,
+                    profilePicture = "",
+                    role = role?.name ?: "Unknown Role",
+                    roleEnum = role ?: com.example.lockermobile.domain.model.UserRole.JOB_SEEKER,
+                    location = "",
+                    bio = "",
+                    skills = emptyList(),
+                    experience = emptyList(),
+                    education = emptyList()
+                ))
             }
         } else {
             emit(null)
